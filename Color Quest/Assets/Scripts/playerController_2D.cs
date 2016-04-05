@@ -21,8 +21,12 @@ public class playerController_2D : MonoBehaviour {
 
 	private bool shooting;
 
-	private Dictionary<Color, int> colorToPlatIndex;
-	public GameObject[] coloredPlatforms;
+	public GameObject platforms;
+	private string colorPlatTag;
+	public String[] colorPlatTags;
+	public Color[] colorPlatForPlayer;
+	public int[] colorMasks; //r == 1, g == 2, b == 4
+	private int currColorPlatMask;
 
 	// Use this for initialization
 	void Start () {
@@ -31,11 +35,7 @@ public class playerController_2D : MonoBehaviour {
 		mySprite = gameObject.GetComponent<SpriteRenderer>();
 		myAudio = gameObject.GetComponent<AudioSource>();
 		m_GroundCheck = transform.Find("GroundCheck");
-		colorToPlatIndex = new Dictionary<Color, int> ();
-		for (int i = 0; i < coloredPlatforms.Length; i++) {
-			Transform plat = coloredPlatforms [i].transform.GetChild (0);
-			colorToPlatIndex.Add (plat.GetComponent<SpriteRenderer> ().color, i);
-		}
+		currColorPlatMask = 0; //white
 	}
 
 	void FixedUpdate(){
@@ -56,9 +56,40 @@ public class playerController_2D : MonoBehaviour {
 	}
 
 	private void checkChangingColor(){
-		if (Input.GetKey ("shift")) {
+		if (Input.GetKey ("left shift") || Input.GetKey("right shift")) {
 			//subtractive color mixing, this is 
+			bool changePlatActive = false;
+			int maskIndex = -1;
+			if (Input.GetKeyDown("1")){
+				maskIndex = 0; //red
+			} else if (Input.GetKeyDown("2")){
+				maskIndex = 1; //green
+			} else if (Input.GetKeyDown("3")){
+				maskIndex = 2; //blue
+			}
+			if (maskIndex > -1) {
+				determineSubColorMix (maskIndex);
+				foreach (Transform colorPlat in platforms.transform) {
+					colorPlatform cpScript = colorPlat.GetComponent<colorPlatform> ();
+					if (colorPlat.tag == colorPlatTag) {
+						if (cpScript.inactive) {
+							cpScript.setActive ();
+						}
+					} else {
+						if (!cpScript.inactive) {
+							cpScript.setInactive ();
+						}
+					}
+				}
+			}
 		}
+	}
+
+	private void determineSubColorMix(int maskIndex){
+		int mask = colorMasks [maskIndex];
+		currColorPlatMask ^= mask;
+		mySprite.color = colorPlatForPlayer [currColorPlatMask];
+		colorPlatTag = colorPlatTags [currColorPlatMask];
 	}
 
 	private void checkMovement(){
@@ -118,7 +149,7 @@ public class playerController_2D : MonoBehaviour {
 	}
 
 	void OnCollisionEnter2D(Collision2D other){
-		if (other.gameObject.tag == "Platforms") {
+		if (other.gameObject.tag == "Platforms" || other.gameObject.tag == colorPlatTag) {
 			if (!other.gameObject.GetComponent<colorPlatform> ().inactive) {
 				onPlatform = true;
 				canJump = true;
@@ -127,7 +158,7 @@ public class playerController_2D : MonoBehaviour {
 	}
 
 	void OnCollisionStay2D(Collision2D other){
-		if (other.gameObject.tag == "Platforms") {
+		if (other.gameObject.tag == "Platforms" || other.gameObject.tag == colorPlatTag) {
 			colorPlatform platScript = other.gameObject.GetComponent<colorPlatform> ();
 			if (!platScript.inactive) {
 				if (Input.GetKeyDown ("down") || Input.GetKeyDown ("s")) {
