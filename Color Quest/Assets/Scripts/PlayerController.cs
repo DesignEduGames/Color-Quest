@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 public class PlayerController : MonoBehaviour {
 
@@ -13,31 +14,35 @@ public class PlayerController : MonoBehaviour {
 	public bool movingRight;
 	public bool jump = false;
 	private bool crouching = false;
+	private bool shooting = false;
 
 	public bool controlling;
 
-	public GameObject followInformationObject;
-
-	public GameObject[] followerObjects;
 	public CapsuleCollider myCollider;
 
 	private float fullHeight;
 
 	private Vector3 right;
 	private Vector3 left;
+	public Color laserColor;
+	private LineRenderer myLines;
 
 	// Use this for initialization
 	void Start () {
+		laserColor = Color.red;
+
 		myCollider = this.gameObject.GetComponent<CapsuleCollider> ();
+		myLines = GetComponent<LineRenderer> ();
 		fullHeight = myCollider.bounds.extents.y;
 	
 
 		velocity = 10f;
-		jumpForce = 1000f;
+		jumpForce = 1000;
 		myRb = GetComponent<Rigidbody> ();
 		myRb.freezeRotation = true;
 		Physics.IgnoreLayerCollision(LayerMask.NameToLayer("Player"), LayerMask.NameToLayer("Interactable"));
 		Physics.IgnoreLayerCollision(LayerMask.NameToLayer("Player"), LayerMask.NameToLayer("Player"));
+		controlling = true;
 
 	}
 
@@ -59,28 +64,31 @@ public class PlayerController : MonoBehaviour {
 
 		movingLeft = false;
 		movingRight = false;
+		shooting = false;
 		//		Camera.main.transform.position = new Vector3 (transform.position.x, transform.position.y + 3f, -10f);
 		if (controlling) {
 			//			Camera.main.transform.position = new Vector3 (transform.position.x, transform.position.y, -10f);
-			if (Input.GetKey(KeyCode.LeftArrow)) {
+			if (Input.GetKey(KeyCode.A)) {
 				movingLeft = true;
 			}
-			if (Input.GetKey(KeyCode.RightArrow)) {
+			if (Input.GetKey(KeyCode.D)) {
 				movingRight = true;
 			}
-
-
-
-			if (Input.GetKeyDown(KeyCode.UpArrow) && onSomething && !crouching) {
+				
+			if (Input.GetKeyDown(KeyCode.Space) && onSomething && !crouching) {
 				jump = true;
 			}
-			if (Input.GetKey(KeyCode.DownArrow)) {
+			if (Input.GetKey(KeyCode.S)) {
 				crouching = true;
 			}
-			if (!Input.GetKey(KeyCode.DownArrow) && !underSomething) {
+			if (!Input.GetKey(KeyCode.S) && !underSomething) {
 				crouching = false;
 			}
+			if (Input.GetMouseButton (0)) {
+				shooting = true;
+			}
 		}
+			
 
 
 
@@ -122,6 +130,25 @@ public class PlayerController : MonoBehaviour {
 		if (!movingRight && !movingLeft) {
 			myRb.velocity = new Vector3(0f, myRb.velocity.y, myRb.velocity.z);
 		}
+
+		myLines.enabled = false;
+		if (shooting) {
+			if (laserColor != Color.black) {
+				myLines.SetColors (Color.red, Color.red);
+				myLines.SetWidth (0.1f, 0.1f);
+				Vector3 mousePos = Input.mousePosition;
+				mousePos.z = 10f;
+				mousePos = Camera.main.ScreenToWorldPoint (mousePos);
+				Vector3 startPos = transform.position;
+				Vector3 endPos = startPos + ((mousePos - startPos) * 50f);
+				List<Vector3> points = new List<Vector3> ();
+				points.Add (startPos);
+				points.Add (endPos);
+				myLines.SetPositions (points.ToArray());
+				myLines.enabled = true;
+			}
+		}
+
 		//transform.rotation = Quaternion.Euler (Vector3.zero);
 	}
 }
