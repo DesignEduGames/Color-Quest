@@ -25,8 +25,12 @@ public class playerController_2D : MonoBehaviour {
 	private string colorPlatTag;
 	public String[] colorPlatTags;
 	public Color[] colorPlatForPlayer;
-	public int[] colorMasks; //r == 1, g == 2, b == 4
+	public int[] colorMasks; //y == 1, m == 2, c == 4
+	private int yellowIndex = 0;
+	private int magentaIndex = 1;
+	private int cyanIndex = 2;
 	private int currColorPlatMask;
+	public GameObject[] toggleColors;
 
 	// Use this for initialization
 	void Start () {
@@ -61,11 +65,11 @@ public class playerController_2D : MonoBehaviour {
 			bool changePlatActive = false;
 			int maskIndex = -1;
 			if (Input.GetKeyDown("1")){
-				maskIndex = 0; //red
+				maskIndex = yellowIndex;
 			} else if (Input.GetKeyDown("2")){
-				maskIndex = 1; //green
+				maskIndex = magentaIndex;
 			} else if (Input.GetKeyDown("3")){
-				maskIndex = 2; //blue
+				maskIndex = cyanIndex;
 			}
 			if (maskIndex > -1) {
 				determineSubColorMix (maskIndex);
@@ -88,6 +92,24 @@ public class playerController_2D : MonoBehaviour {
 	private void determineSubColorMix(int maskIndex){
 		int mask = colorMasks [maskIndex];
 		currColorPlatMask ^= mask;
+		bool yellowToggled = (colorMasks [yellowIndex] & currColorPlatMask) == colorMasks [yellowIndex];
+		bool magentaToggled = (colorMasks [magentaIndex] & currColorPlatMask) == colorMasks [magentaIndex];
+		bool cyanToggled = (colorMasks [cyanIndex] & currColorPlatMask) == colorMasks [cyanIndex];
+		if (yellowToggled) {
+			toggleColors [yellowIndex].GetComponent<toggleColor> ().setActive ();
+		} else {
+			toggleColors [yellowIndex].GetComponent<toggleColor> ().setInactive ();
+		}
+		if (magentaToggled) {
+			toggleColors [magentaIndex].GetComponent<toggleColor> ().setActive ();
+		} else {
+			toggleColors [magentaIndex].GetComponent<toggleColor> ().setInactive ();
+		}
+		if (cyanToggled) {
+			toggleColors [cyanIndex].GetComponent<toggleColor> ().setActive ();
+		} else {
+			toggleColors [cyanIndex].GetComponent<toggleColor> ().setInactive ();
+		}
 		mySprite.color = colorPlatForPlayer [currColorPlatMask];
 		colorPlatTag = colorPlatTags [currColorPlatMask];
 	}
