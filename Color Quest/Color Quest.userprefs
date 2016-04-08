@@ -1,10 +1,10 @@
 ﻿<Properties StartupItem="Assembly-CSharp.csproj">
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" PreferredExecutionTarget="Unity.Instance.Unity Editor" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/Scripts/playerController_2D.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/Scripts/ShootingControl.cs">
     <Files>
-      <File FileName="Assets/Scripts/PlayerController.cs" Line="25" Column="15" />
-      <File FileName="Assets/Scripts/playerController_2D.cs" Line="89" Column="24" />
-      <File FileName="Assets/Scripts/colorPlatform.cs" Line="41" Column="4" />
+      <File FileName="Assets/Scripts/PlayerController.cs" Line="87" Column="31" />
+      <File FileName="Assets/Scripts/playerController_2D.cs" Line="73" Column="5" />
+      <File FileName="Assets/Scripts/ShootingControl.cs" Line="43" Column="40" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>

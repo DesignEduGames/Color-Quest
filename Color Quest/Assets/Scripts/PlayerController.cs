@@ -4,70 +4,60 @@ using System.Collections.Generic;
 
 public class PlayerController : MonoBehaviour {
 
-
+	public int underNum;
 	public float velocity;
 	public float jumpForce;
-	private Rigidbody myRb;
-	private bool onSomething = false;
-	private bool underSomething = false;
+	private Rigidbody2D myRb;
+	public bool canJump = false;
 	public bool movingLeft;
 	public bool movingRight;
 	public bool jump = false;
-	private bool crouching = false;
-	private bool shooting = false;
-
 	public bool controlling;
+	public bool triggered;
 
-	public CapsuleCollider myCollider;
-
-	private float fullHeight;
-
-	private Vector3 right;
-	private Vector3 left;
-	public Color laserColor;
-	private LineRenderer myLines;
+	public Color myColor;
+	public int [] cVals = new int[3];
+	private SpriteRenderer mySprite;
 
 	// Use this for initialization
 	void Start () {
-		laserColor = Color.red;
+		underNum = 0;
+		Physics2D.IgnoreLayerCollision (LayerMask.NameToLayer ("Player"), LayerMask.NameToLayer ("Player"));
+		Physics2D.IgnoreLayerCollision (LayerMask.NameToLayer ("Player"), LayerMask.NameToLayer ("000"), true);
+		Physics2D.IgnoreLayerCollision (LayerMask.NameToLayer ("Player"), LayerMask.NameToLayer ("001"), true);
+		Physics2D.IgnoreLayerCollision (LayerMask.NameToLayer ("Player"), LayerMask.NameToLayer ("010"), true);
+		Physics2D.IgnoreLayerCollision (LayerMask.NameToLayer ("Player"), LayerMask.NameToLayer ("011"), true);
+		Physics2D.IgnoreLayerCollision (LayerMask.NameToLayer ("Player"), LayerMask.NameToLayer ("100"), true);
+		Physics2D.IgnoreLayerCollision (LayerMask.NameToLayer ("Player"), LayerMask.NameToLayer ("101"), true);
+		Physics2D.IgnoreLayerCollision (LayerMask.NameToLayer ("Player"), LayerMask.NameToLayer ("110"), true);
+		Physics2D.IgnoreLayerCollision (LayerMask.NameToLayer ("Player"), LayerMask.NameToLayer ("111"), true);
 
-		myCollider = this.gameObject.GetComponent<CapsuleCollider> ();
-		myLines = GetComponent<LineRenderer> ();
-		fullHeight = myCollider.bounds.extents.y;
-	
-
-		velocity = 10f;
-		jumpForce = 1000;
-		myRb = GetComponent<Rigidbody> ();
+		velocity = 15f;
+		jumpForce = 2000f;
+		myRb = GetComponent<Rigidbody2D> ();
 		myRb.freezeRotation = true;
-		Physics.IgnoreLayerCollision(LayerMask.NameToLayer("Player"), LayerMask.NameToLayer("Interactable"));
-		Physics.IgnoreLayerCollision(LayerMask.NameToLayer("Player"), LayerMask.NameToLayer("Player"));
 		controlling = true;
+
+		mySprite = GetComponent<SpriteRenderer> ();
+
+		cVals [0] = Mathf.RoundToInt (myColor.r);
+		cVals [1] = Mathf.RoundToInt (myColor.g);
+		cVals [2] = Mathf.RoundToInt (myColor.b);
+
+		refreshColor ();
+		mySprite.color = myColor;
+
 
 	}
 
 	void Update() {
-		Vector3 colliderCenter = myCollider.bounds.center;
-		Vector3 right = colliderCenter + Vector3.right * myCollider.bounds.extents.x * 0.95f;
-		Vector3 left = colliderCenter - Vector3.right * myCollider.bounds.extents.x * 0.95f;
-
-		Debug.DrawLine (right, right + (Vector3.down * myCollider.bounds.extents.y * 1.001f));
-		Debug.DrawLine (left, left + (Vector3.down * myCollider.bounds.extents.y * 1.001f));
-		Debug.DrawLine (right, right + (Vector3.up * fullHeight * 1.5f));
-		Debug.DrawLine (left, left + (Vector3.up * fullHeight * 1.5f));
-
-		onSomething = Physics.Linecast (right, right + (Vector3.down * myCollider.bounds.extents.y * 1.001f), 1 << LayerMask.NameToLayer ("Obstacle")) 
-			|| Physics.Linecast (left, left + (Vector3.down * myCollider.bounds.extents.y * 1.001f), 1 << LayerMask.NameToLayer ("Obstacle"));
-
-		underSomething = Physics.Linecast (right, right + (Vector3.up * fullHeight * 1.5f), 1 << LayerMask.NameToLayer ("Obstacle")) 
-			|| Physics.Linecast (left, left + (Vector3.up * fullHeight * 1.5f), 1 << LayerMask.NameToLayer ("Obstacle"));
 
 		movingLeft = false;
 		movingRight = false;
-		shooting = false;
-		//		Camera.main.transform.position = new Vector3 (transform.position.x, transform.position.y + 3f, -10f);
+		canJump = underNum > 0;
+
+
 		if (controlling) {
-			//			Camera.main.transform.position = new Vector3 (transform.position.x, transform.position.y, -10f);
 			if (Input.GetKey(KeyCode.A)) {
 				movingLeft = true;
 			}
@@ -75,80 +65,57 @@ public class PlayerController : MonoBehaviour {
 				movingRight = true;
 			}
 				
-			if (Input.GetKeyDown(KeyCode.Space) && onSomething && !crouching) {
+			if (Input.GetKeyDown(KeyCode.Space) && canJump && Mathf.Abs(myRb.velocity.y) < 0.01f) {
 				jump = true;
 			}
-			if (Input.GetKey(KeyCode.S)) {
-				crouching = true;
-			}
-			if (!Input.GetKey(KeyCode.S) && !underSomething) {
-				crouching = false;
-			}
-			if (Input.GetMouseButton (0)) {
-				shooting = true;
-			}
+
+			Vector3 mousePos = Input.mousePosition;
+			mousePos.z = 10f;
+			mousePos = Camera.main.ScreenToWorldPoint (mousePos);
+			Vector3 s = transform.localScale;
+			s.x = Mathf.Sign (mousePos.x - transform.position.x);
+			transform.localScale = s;
+
 		}
-			
-
-
-
 	}
-
+		
 	// Update is called once per frame
 	void FixedUpdate () {
-		transform.position = new Vector3 (transform.position.x, transform.position.y, 0f);
+		transform.position = new Vector2 (transform.position.x, transform.position.y);
 
 		if (movingLeft) {
 			//restrict movement to one plane
-			transform.position = new Vector3 (transform.position.x, transform.position.y, 0f);
-			myRb.velocity = new Vector3 (-1 * velocity, myRb.velocity.y, myRb.velocity.z);
-			Vector3 s = transform.localScale;
-			s.x = -1;
-			transform.localScale = s;
+			transform.position = new Vector2 (transform.position.x, transform.position.y);
+			myRb.velocity = new Vector2 (-1 * velocity, myRb.velocity.y);
+//			Vector3 s = transform.localScale;
+//			s.x = -1;
+//			transform.localScale = s;
 		}
 		if (movingRight) {
-			transform.position = new Vector3 (transform.position.x, transform.position.y, 0f);
-			myRb.velocity = new Vector3 (velocity, myRb.velocity.y, myRb.velocity.z);
-			Vector3 s = transform.localScale;
-			s.x = 1;
-			transform.localScale = s;
+			transform.position = new Vector2 (transform.position.x, transform.position.y);
+			myRb.velocity = new Vector2 (velocity, myRb.velocity.y);
+//			Vector3 s = transform.localScale;
+//			s.x = 1;
+//			transform.localScale = s;
 		}
-
-		if (crouching) {
-			transform.localScale = new Vector3 (transform.localScale.x, 0.5f, 1f);
-			velocity = 5f;
-		}
-		else {
-			transform.localScale = new Vector3 (transform.localScale.x, 1f, 1f);
-			velocity = 10f;
-		}
-
-		if (jump && onSomething && Mathf.Abs(myRb.velocity.y) < 0.01f) {
-			myRb.AddForce (Vector3.up * jumpForce);
+		if (jump) {
+			myRb.AddForce (Vector2.up * jumpForce);
 			jump = false;
 		}
-		if (!movingRight && !movingLeft) {
-			myRb.velocity = new Vector3(0f, myRb.velocity.y, myRb.velocity.z);
+		if (!movingRight && !movingLeft && canJump) {
+			myRb.velocity = new Vector2(0f, myRb.velocity.y);
 		}
+	}
 
-		myLines.enabled = false;
-		if (shooting) {
-			if (laserColor != Color.black) {
-				myLines.SetColors (Color.red, Color.red);
-				myLines.SetWidth (0.1f, 0.1f);
-				Vector3 mousePos = Input.mousePosition;
-				mousePos.z = 10f;
-				mousePos = Camera.main.ScreenToWorldPoint (mousePos);
-				Vector3 startPos = transform.position;
-				Vector3 endPos = startPos + ((mousePos - startPos) * 50f);
-				List<Vector3> points = new List<Vector3> ();
-				points.Add (startPos);
-				points.Add (endPos);
-				myLines.SetPositions (points.ToArray());
-				myLines.enabled = true;
-			}
-		}
+	void OnTriggerEnter2D (Collider2D other) {
+		underNum++;
+	}
+	void OnTriggerExit2D (Collider2D other) {
+		underNum--;
+	}
 
-		//transform.rotation = Quaternion.Euler (Vector3.zero);
+	public void refreshColor () {
+		myColor = new Color (cVals [0], cVals [1], cVals [2]);
+		mySprite.color = myColor;
 	}
 }

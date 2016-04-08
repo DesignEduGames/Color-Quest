@@ -7,29 +7,36 @@ public class ShootingControl : MonoBehaviour {
 	public GameObject source;
 	public bool shooting;
 	public LineRenderer myLines;
-	public Color laserColor;
+	public Color myColor;
+	public int [] cVals = new int[3];
+	public bool controlling;
 
 
 	// Use this for initialization
 	void Start () {
 		shooting = false;
+		controlling = true;
 		myLines = GetComponent<LineRenderer> ();
+		cVals [0] = Mathf.RoundToInt (myColor.r);
+		cVals [1] = Mathf.RoundToInt (myColor.g);
+		cVals [2] = Mathf.RoundToInt (myColor.b);
+		refreshColor ();
 	}
 	
 	// Update is called once per frame
 	void Update () {
-		shooting = false;
-		if (Input.GetMouseButton (0)) {
-			shooting = true;
-		}
-	}
 
-	void FixedUpdate () {
+		shooting = false;
+		if (controlling) {
+			if (Input.GetMouseButton (0)) {
+				shooting = true;
+			}
+		}
 		myLines.enabled = false;
 		if (shooting) {
-			if (laserColor != Color.black) {
+			if (myColor != Color.black) {
 				bool bouncing = true;
-				myLines.SetColors (Color.red, Color.red);
+				myLines.SetColors (myColor, myColor);
 				myLines.SetWidth (0.1f, 0.1f);
 				Vector3 mousePos = Input.mousePosition;
 				mousePos.z = 10f;
@@ -40,8 +47,8 @@ public class ShootingControl : MonoBehaviour {
 				List<Vector3> points = new List<Vector3> ();
 				points.Add (startPos);
 				int totalBounces = 0;
-				while (bouncing && totalBounces < 50) {
-					Debug.Log (totalBounces);
+				while (bouncing && totalBounces < 10) {
+//					Debug.Log (totalBounces);
 					RaycastHit2D bounceHit = Physics2D.Raycast (prevPos, nextDir, 100f, ~(1 << LayerMask.NameToLayer("Player")));
 					if (bounceHit.collider == null) {
 						bouncing = false;
@@ -57,10 +64,20 @@ public class ShootingControl : MonoBehaviour {
 						nextDir = (Vector2.Reflect (nextDir, bounceHit.normal)).normalized;
 					}
 				}
-				myLines.SetVertexCount (points.Count);
-				myLines.SetPositions (points.ToArray());
+				myLines.SetVertexCount (points.Count * 2);
+
+				Vector3 [] pointArray = new Vector3[points.Count * 2];
+				for (int i = 0; i < points.Count; i++) {
+					pointArray [i] = points [i];
+					pointArray [points.Count * 2 - 1 - i] = points [i];
+				}
+//				myLines.SetPositions (points.ToArray());
+				myLines.SetPositions (pointArray);
 				myLines.enabled = true;
 			}
 		}
+	}
+	public void refreshColor () {
+		myColor = new Color (cVals [0], cVals [1], cVals [2]);
 	}
 }

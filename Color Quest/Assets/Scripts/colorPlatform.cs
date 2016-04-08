@@ -58,4 +58,6 @@ public class colorPlatform : MonoBehaviour {
 		playerFallingThrough = true;
 	}
 
+
+
 }
