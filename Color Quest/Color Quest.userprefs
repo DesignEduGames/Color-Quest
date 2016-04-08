@@ -2,9 +2,12 @@
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" PreferredExecutionTarget="Unity.Instance.Unity Editor" />
   <MonoDevelop.Ide.Workbench ActiveDocument="Assets/Scripts/ShootingControl.cs">
     <Files>
-      <File FileName="Assets/Scripts/PlayerController.cs" Line="87" Column="31" />
-      <File FileName="Assets/Scripts/playerController_2D.cs" Line="73" Column="5" />
-      <File FileName="Assets/Scripts/ShootingControl.cs" Line="43" Column="40" />
+      <File FileName="Assets/Scripts/PlayerController.cs" Line="36" Column="19" />
+      <File FileName="Assets/Scripts/playerController_2D.cs" Line="67" Column="31" />
+      <File FileName="Assets/Scripts/colorPlatform.cs" Line="64" Column="1" />
+      <File FileName="Assets/Scripts/ShootingControl.cs" Line="57" Column="7" />
+      <File FileName="Assets/platformScript.cs" Line="18" Column="19" />
+      <File FileName="Assets/GameManager.cs" Line="31" Column="23" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
