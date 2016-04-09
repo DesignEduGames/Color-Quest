@@ -77,6 +77,46 @@ public class ShootingControl : MonoBehaviour {
 			}
 		}
 	}
+
+
+//BELOW IS SOME BROKEN SHIT
+//	// Update is called once per frame
+//	void Update () {
+//
+//		shooting = false;
+//		if (controlling) {
+//			if (Input.GetMouseButton (0)) {
+//				shooting = true;
+//			}
+//		}
+//		myLines.enabled = false;
+//		if (shooting) {
+//			if (myColor != Color.black) {
+//				myLines.SetVertexCount (2);
+//				myLines.SetColors (myColor, myColor);
+//				myLines.SetWidth (0.1f, 0.1f);
+//				Vector3 mousePos = Input.mousePosition;
+//				mousePos.z = 10f;
+//				mousePos = Camera.main.ScreenToWorldPoint (mousePos);
+//				Vector3 startPos = source.transform.position;
+//				Vector3 dir = (mousePos - startPos).normalized;
+//				myLines.SetPosition (0, startPos);
+//
+//				RaycastHit2D bounceHit = Physics2D.Raycast (startPos, dir, 100f, ~(1 << LayerMask.NameToLayer("Player")));
+//
+//				if (bounceHit.collider == null) {
+//					myLines.SetPosition (1, startPos + dir * 100f);
+//				}
+//				else {
+//					myLines.SetPosition (1, bounceHit.point);
+//					Vector3 nextDir = (Vector2.Reflect (dir, bounceHit.normal)).normalized;
+//					bounceHit.collider.gameObject.GetComponent<platformScript> ().reflectLaser (bounceHit.point, nextDir, myColor);
+//				}
+//				myLines.enabled = true;
+//			}
+//		}
+//	}
+
 	public void refreshColor () {
 		myColor = new Color (cVals [0], cVals [1], cVals [2]);
 	}

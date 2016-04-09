@@ -118,4 +118,9 @@ public class PlayerController : MonoBehaviour {
 		myColor = new Color (cVals [0], cVals [1], cVals [2]);
 		mySprite.color = myColor;
 	}
+
+	public void shootLaser () {
+	
+	}
+
 }
