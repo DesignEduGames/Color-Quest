@@ -14,6 +14,8 @@ public class GameManager : MonoBehaviour {
 	public bool inPauseMenu;
 
 	private float timeSinceSlowmoToggle;
+	public Texture tex;
+	private Texture2D pauseTex;
 
 
 	// Use this for initialization
@@ -22,6 +24,10 @@ public class GameManager : MonoBehaviour {
 		shooter = shootObj.GetComponent<ShootingControlBad> ();
 		inColorMenu = false;
 		inPauseMenu = false;
+		pauseTex = new Texture2D(1, 1);
+		Color gray = new Color (0.1f, 0.1f, 0.1f, 0.7f);
+		pauseTex.SetPixel(0,0,gray);
+		pauseTex.Apply();
 
 	}
 
@@ -41,6 +47,7 @@ public class GameManager : MonoBehaviour {
 			inColorMenu = false;
 		}
 		if (inColorMenu) {
+			
 			player.controlling = false;
 			shooter.controlling = false;
 			Time.timeScale = Mathf.SmoothStep (1f, 0.1f, timeSinceSlowmoToggle / 0.2f);
@@ -52,42 +59,21 @@ public class GameManager : MonoBehaviour {
 			Time.timeScale = Mathf.SmoothStep (Time.timeScale, 1f, timeSinceSlowmoToggle / 0.1f);
 			Time.fixedDeltaTime = Time.timeScale * 0.02f;
 		}
-//		Debug.Log (timeSinceSlowmoToggle);
 
-//		if (inColorMenu) {
-//			if (Input.GetKeyDown (KeyCode.Alpha1)) {
-//				player.cVals [1] ^= 1;
-////				player.cVals [2] ^= 1;
-//				player.refreshColor ();
-//			}
-//			if (Input.GetKeyDown (KeyCode.Alpha2)) {
-////				player.cVals [0] ^= 1;
-//				player.cVals [2] ^= 1;
-//				player.refreshColor ();
-//			}
-//			if (Input.GetKeyDown (KeyCode.Alpha3)) {
-//				player.cVals [0] ^= 1;
-////				player.cVals [1] ^= 1;
-//				player.refreshColor ();
-//			}
-//			if (Input.GetKeyDown (KeyCode.Alpha4)) {
-//				shooter.cVals [0] ^= 1;
-//				shooter.refreshColor ();
-//			}
-//			if (Input.GetKeyDown (KeyCode.Alpha5)) {
-//				shooter.cVals [1] ^= 1;
-//				shooter.refreshColor ();
-//			}
-//			if (Input.GetKeyDown (KeyCode.Alpha6)) {
-//				shooter.cVals [2] ^= 1;
-//				shooter.refreshColor ();
-//			}
-//		}
 	}
 
 	void OnGUI () {
+
+//		if (Time.timeScale < 1f) {
+//			Debug.Log ("asdf");
+////			GUI.skin.box.normal.background = pauseTex;
+//			GUI.DrawTexture(new Rect(0,0,Screen.width, Screen.height), pauseTex);
+//		}
+
 		if (inColorMenu) {
 			//			if (Input.GetKeyDown (KeyCode.Alpha1)) {
+			GUI.DrawTexture(new Rect(0,0,Screen.width, Screen.height), pauseTex);
+
 			GUI.color = Color.magenta;
 			if (GUILayout.Button("MAGENTA", GUILayout.Width(150f), GUILayout.Height(50f))) {
 				Physics2D.IgnoreLayerCollision (LayerMask.NameToLayer ("Player"), LayerMask.NameToLayer ("" + player.cVals [0] + player.cVals [1] + player.cVals [2]), true);

@@ -53,7 +53,7 @@ public class ShootingControlBad : MonoBehaviour {
 					myLines [i].enabled = true;
 //					Debug.Log (nextColor);
 					myLines [i].SetColors (nextColor, nextColor);
-					myLines [i].SetWidth (0.1f, 0.1f);
+					myLines [i].SetWidth (0.2f, 0.2f);
 					myLines [i].SetVertexCount (2);
 					RaycastHit2D bounceHit = Physics2D.Raycast (prevPos, nextDir, 100f, ~(1 << LayerMask.NameToLayer ("Player")));
 					if (bounceHit.collider == null) {
@@ -61,7 +61,14 @@ public class ShootingControlBad : MonoBehaviour {
 						Vector3 endPos = prevPos + (nextDir * 100f);
 						myLines [i].SetPositions (new Vector3[] { prevPos, endPos });
 					}
-					else if (bounceHit.collider.tag == "Interactable") {
+					else if (bounceHit.collider.tag == "Enemy") {
+						EnemyScript es = bounceHit.collider.gameObject.GetComponent<EnemyScript> ();
+						es.absorbColor (nextCVals);
+						myLines [i].SetPositions (new Vector3[] { prevPos, bounceHit.point });
+						Debug.DrawRay (bounceHit.point, Vector3.down * 50f, Color.yellow);
+						prevPos = bounceHit.point + (bounceHit.normal.normalized * 0.01f);
+						nextDir = (Vector2.Reflect (nextDir, bounceHit.normal)).normalized;
+						bouncing = false;
 					}
 					else if (bounceHit.collider.tag == "Platform") {
 						PlatformScript ps = bounceHit.collider.gameObject.GetComponent<PlatformScript> ();
