@@ -10,6 +10,18 @@ public class ShootingControl : MonoBehaviour {
 	public Color myColor;
 	public int [] cVals = new int[3];
 	public bool controlling;
+	public float width;
+
+
+	Mesh mesh;
+	MeshRenderer meshRenderer;
+	Vector2[] newUV;
+	int[] newTriangles;
+	public List<Vector2> newVertices = new List<Vector2> ();
+	public List<RaycastHit2D> hits = new List<RaycastHit2D> ();
+	public List<Vector3> linePoints = new List<Vector3> ();
+	Vector3 beginning;
+	Vector3 ending;
 
 
 	// Use this for initialization
@@ -78,44 +90,39 @@ public class ShootingControl : MonoBehaviour {
 		}
 	}
 
+	void castRays () {
+		hits.Clear ();
+		linePoints.Clear ();
+		bool bouncing = true;
+		Vector3 mousePos = Input.mousePosition;
+		mousePos.z = 10f;
+		mousePos = Camera.main.ScreenToWorldPoint (mousePos);
+		Vector3 startPos = source.transform.position;
 
-//BELOW IS SOME BROKEN SHIT
-//	// Update is called once per frame
-//	void Update () {
-//
-//		shooting = false;
-//		if (controlling) {
-//			if (Input.GetMouseButton (0)) {
-//				shooting = true;
-//			}
-//		}
-//		myLines.enabled = false;
-//		if (shooting) {
-//			if (myColor != Color.black) {
-//				myLines.SetVertexCount (2);
-//				myLines.SetColors (myColor, myColor);
-//				myLines.SetWidth (0.1f, 0.1f);
-//				Vector3 mousePos = Input.mousePosition;
-//				mousePos.z = 10f;
-//				mousePos = Camera.main.ScreenToWorldPoint (mousePos);
-//				Vector3 startPos = source.transform.position;
-//				Vector3 dir = (mousePos - startPos).normalized;
-//				myLines.SetPosition (0, startPos);
-//
-//				RaycastHit2D bounceHit = Physics2D.Raycast (startPos, dir, 100f, ~(1 << LayerMask.NameToLayer("Player")));
-//
-//				if (bounceHit.collider == null) {
-//					myLines.SetPosition (1, startPos + dir * 100f);
-//				}
-//				else {
-//					myLines.SetPosition (1, bounceHit.point);
-//					Vector3 nextDir = (Vector2.Reflect (dir, bounceHit.normal)).normalized;
-//					bounceHit.collider.gameObject.GetComponent<platformScript> ().reflectLaser (bounceHit.point, nextDir, myColor);
-//				}
-//				myLines.enabled = true;
-//			}
-//		}
-//	}
+		linePoints.Add (startPos);
+		beginning = source.transform.position;
+		Vector3 prevPos = startPos;
+		Vector3 nextDir = (mousePos - startPos).normalized;
+		newVertices.Add (startPos + Vector3.Cross (nextDir, Vector3.back).normalized * width);
+		newVertices.Add (startPos - Vector3.Cross (nextDir, Vector3.back).normalized * width);
+		int totalBounces = 0;
+		while (bouncing && totalBounces < 10) {
+			RaycastHit2D bounceHit = Physics2D.Raycast (prevPos, nextDir, 100f, ~(1 << LayerMask.NameToLayer ("Player")));
+			if (bounceHit.collider == null) {
+				bouncing = false;
+				linePoints.Add(prevPos + (nextDir * 100f));
+			}
+			else {
+				totalBounces++;
+				hits.Add (bounceHit);
+				linePoints.Add (bounceHit.point);
+				prevPos = bounceHit.point + (bounceHit.normal.normalized * 0.01f);
+				nextDir = (Vector2.Reflect (nextDir, bounceHit.normal)).normalized;
+			}
+		}
+	}
+
+
 
 	public void refreshColor () {
 		myColor = new Color (cVals [0], cVals [1], cVals [2]);

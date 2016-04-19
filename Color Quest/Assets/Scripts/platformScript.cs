@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class platformScript : MonoBehaviour {
+public class PlatformScript : MonoBehaviour {
 
 
 	public Color myColor;
@@ -37,6 +37,15 @@ public class platformScript : MonoBehaviour {
 	public void refreshColor () {
 		myColor = new Color (cVals [0], cVals [1], cVals [2]);
 		mySprite.color = myColor;
+	}
+
+	public int [] reflectColor (int[] inCVals) {
+		int[] ret = new int[3];
+		for (int i = 0; i < 3; i++) {
+			ret [i] = inCVals [i] * cVals [i];
+		}
+//		Debug.Log (inCVals);
+		return ret;
 	}
 //		
 //

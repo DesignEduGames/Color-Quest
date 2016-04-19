@@ -7,7 +7,8 @@ public class GameManager : MonoBehaviour {
 	public GameObject shootObj;
 
 	public PlayerController player;
-	public ShootingControl shooter;
+//	public ShootingControl shooter;
+	public ShootingControlBad shooter;
 
 	public bool inColorMenu;
 	public bool inPauseMenu;
@@ -18,7 +19,7 @@ public class GameManager : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
 		player = playerObj.GetComponent<PlayerController> ();
-		shooter = shootObj.GetComponent<ShootingControl> ();
+		shooter = shootObj.GetComponent<ShootingControlBad> ();
 		inColorMenu = false;
 		inPauseMenu = false;
 
@@ -51,7 +52,7 @@ public class GameManager : MonoBehaviour {
 			Time.timeScale = Mathf.SmoothStep (Time.timeScale, 1f, timeSinceSlowmoToggle / 0.1f);
 			Time.fixedDeltaTime = Time.timeScale * 0.02f;
 		}
-		Debug.Log (timeSinceSlowmoToggle);
+//		Debug.Log (timeSinceSlowmoToggle);
 
 //		if (inColorMenu) {
 //			if (Input.GetKeyDown (KeyCode.Alpha1)) {
