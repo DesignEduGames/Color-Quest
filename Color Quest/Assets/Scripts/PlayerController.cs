@@ -65,7 +65,7 @@ public class PlayerController : MonoBehaviour {
 				movingRight = true;
 			}
 				
-			if (Input.GetKeyDown(KeyCode.Space) && canJump && Mathf.Abs(myRb.velocity.y) < 0.01f) {
+			if ((Input.GetKeyDown(KeyCode.Space) || Input.GetKeyDown(KeyCode.W)) && canJump && Mathf.Abs(myRb.velocity.y) < 0.01f) {
 				jump = true;
 			}
 
@@ -83,7 +83,7 @@ public class PlayerController : MonoBehaviour {
 	void FixedUpdate () {
 		transform.position = new Vector2 (transform.position.x, transform.position.y);
 
-		if (movingLeft) {
+		if (movingLeft && canJump) {
 			//restrict movement to one plane
 			transform.position = new Vector2 (transform.position.x, transform.position.y);
 			myRb.velocity = new Vector2 (-1 * velocity, myRb.velocity.y);
@@ -91,12 +91,18 @@ public class PlayerController : MonoBehaviour {
 //			s.x = -1;
 //			transform.localScale = s;
 		}
-		if (movingRight) {
+		if (movingLeft && !canJump && myRb.velocity.x > -1 * velocity) {
+			myRb.AddForce (Vector3.left * 100f);
+		}
+		if (movingRight && canJump) {
 			transform.position = new Vector2 (transform.position.x, transform.position.y);
 			myRb.velocity = new Vector2 (velocity, myRb.velocity.y);
 //			Vector3 s = transform.localScale;
 //			s.x = 1;
 //			transform.localScale = s;
+		}
+		if (movingRight && !canJump && myRb.velocity.x < velocity) {
+			myRb.AddForce (Vector3.right * 100f);
 		}
 		if (jump) {
 			myRb.AddForce (Vector2.up * jumpForce);

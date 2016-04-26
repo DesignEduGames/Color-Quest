@@ -10,6 +10,7 @@ public class ShootingControlBad : MonoBehaviour {
 	public Color myColor;
 	public int[] cVals = new int[3];
 	public bool controlling;
+	private SpriteRenderer mySprite;
 
 	// Use this for initialization
 	void Start () {
@@ -20,11 +21,27 @@ public class ShootingControlBad : MonoBehaviour {
 		cVals [1] = Mathf.RoundToInt (myColor.g);
 		cVals [2] = Mathf.RoundToInt (myColor.b);
 		refreshColor ();
+		mySprite = GetComponent<SpriteRenderer> ();
 
 	}
 	
 	// Update is called once per frame
 	void Update () {
+		mySprite.color = myColor;
+		Vector3 mousePos = Input.mousePosition;
+		mousePos.z = 10f;
+		mousePos = Camera.main.ScreenToWorldPoint (mousePos);
+
+		float zRot = Mathf.Rad2Deg * (Mathf.Atan2 (mousePos.y - transform.position.y, mousePos.x - transform.position.x));
+		if (mousePos.x - transform.position.x < 0) {
+			transform.localScale = new Vector3 (-1f, -1f, 1f);
+			zRot = 360f - zRot;
+		}
+		else {
+			transform.localScale = new Vector3 (1f, 1f, 1f);
+		}
+		transform.rotation = Quaternion.Euler (new Vector3 (0f, 0f, zRot));
+
 		shooting = false;
 		if (controlling) {
 			if (Input.GetMouseButton (0)) {
@@ -39,9 +56,7 @@ public class ShootingControlBad : MonoBehaviour {
 				bool bouncing = true;
 				int lineNum = 0;
 
-				Vector3 mousePos = Input.mousePosition;
-				mousePos.z = 10f;
-				mousePos = Camera.main.ScreenToWorldPoint (mousePos);
+
 				Vector3 startPos = source.transform.position;
 				Vector3 prevPos = startPos;
 				Vector3 nextDir = (mousePos - startPos).normalized;

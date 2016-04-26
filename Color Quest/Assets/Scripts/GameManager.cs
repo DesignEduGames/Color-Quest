@@ -17,6 +17,8 @@ public class GameManager : MonoBehaviour {
 	public Texture tex;
 	private Texture2D pauseTex;
 
+	private Color transparentWhite;
+
 
 	// Use this for initialization
 	void Start () {
@@ -26,6 +28,7 @@ public class GameManager : MonoBehaviour {
 		inPauseMenu = false;
 		pauseTex = new Texture2D(1, 1);
 		Color gray = new Color (0.1f, 0.1f, 0.1f, 0.7f);
+		transparentWhite = new Color (1f, 1f, 1f, 0.5f);
 		pauseTex.SetPixel(0,0,gray);
 		pauseTex.Apply();
 
@@ -70,47 +73,97 @@ public class GameManager : MonoBehaviour {
 //			GUI.DrawTexture(new Rect(0,0,Screen.width, Screen.height), pauseTex);
 //		}
 
-		if (inColorMenu) {
-			//			if (Input.GetKeyDown (KeyCode.Alpha1)) {
-			GUI.DrawTexture(new Rect(0,0,Screen.width, Screen.height), pauseTex);
 
-			GUI.color = Color.magenta;
+		if (inColorMenu) {
+
+			GUILayout.BeginHorizontal ();
+
+			GUILayout.BeginHorizontal (GUILayout.Width (Screen.width / 4));
+			GUILayout.Label ("");
+			GUILayout.EndHorizontal ();
+			GUILayout.BeginVertical (GUILayout.Width (Screen.width / 4));
+
+
+
+			GUI.DrawTexture(new Rect(0,0,Screen.width, Screen.height), pauseTex);
+			GUI.color = Color.white;
+			GUILayout.Label ("PLAYER COLORS");
+			if (player.cVals [1] == 0) {
+				GUI.color = Color.magenta;
+			}
+			else {
+				GUI.color = transparentWhite;
+			}
 			if (GUILayout.Button("MAGENTA", GUILayout.Width(150f), GUILayout.Height(50f))) {
 				Physics2D.IgnoreLayerCollision (LayerMask.NameToLayer ("Player"), LayerMask.NameToLayer ("" + player.cVals [0] + player.cVals [1] + player.cVals [2]), true);
 				player.cVals [1] ^= 1;
 				player.refreshColor ();
 				Physics2D.IgnoreLayerCollision (LayerMask.NameToLayer ("Player"), LayerMask.NameToLayer ("" + player.cVals [0] + player.cVals [1] + player.cVals [2]), false);
 			}
-			GUI.color = Color.yellow;
+			if (player.cVals [2] == 0) {
+				GUI.color = Color.yellow;
+			}
+			else {
+				GUI.color = transparentWhite;
+			}
 			if (GUILayout.Button("YELLOW", GUILayout.Width(150f), GUILayout.Height(50f))) {
 				Physics2D.IgnoreLayerCollision (LayerMask.NameToLayer ("Player"), LayerMask.NameToLayer ("" + player.cVals [0] + player.cVals [1] + player.cVals [2]), true);
 				player.cVals [2] ^= 1;
 				player.refreshColor ();
 				Physics2D.IgnoreLayerCollision (LayerMask.NameToLayer ("Player"), LayerMask.NameToLayer ("" + player.cVals [0] + player.cVals [1] + player.cVals [2]), false);
 			}
-			GUI.color = Color.cyan;
+			if (player.cVals [0] == 0) {
+				GUI.color = Color.cyan;
+			}
+			else {
+				GUI.color = transparentWhite;
+			}
 			if (GUILayout.Button("CYAN", GUILayout.Width(150f), GUILayout.Height(50f))) {
 				Physics2D.IgnoreLayerCollision (LayerMask.NameToLayer ("Player"), LayerMask.NameToLayer ("" + player.cVals [0] + player.cVals [1] + player.cVals [2]), true);
 				player.cVals [0] ^= 1;
 				player.refreshColor ();
 				Physics2D.IgnoreLayerCollision (LayerMask.NameToLayer ("Player"), LayerMask.NameToLayer ("" + player.cVals [0] + player.cVals [1] + player.cVals [2]), false);
 			}
-			GUI.color = Color.red;
+
+			GUILayout.EndVertical ();
+			GUILayout.BeginVertical (GUILayout.Width (Screen.width / 4));
+			GUI.color = Color.white;
+			GUILayout.Label ("LASER COLORS");
+
+			if (shooter.cVals [0] == 1) {
+				GUI.color = Color.red;
+			}
+			else {
+				GUI.color = transparentWhite;
+			}
 			if (GUILayout.Button("RED", GUILayout.Width(150f), GUILayout.Height(50f))) {
 				shooter.cVals [0] ^= 1;
 				shooter.refreshColor ();
 			}
-			GUI.color = Color.green;
+			if (shooter.cVals [1] == 1) {
+				GUI.color = Color.green;
+			}
+			else {
+				GUI.color = transparentWhite;
+			}			
 			if (GUILayout.Button("GREEN", GUILayout.Width(150f), GUILayout.Height(50f))) {
 				shooter.cVals [1] ^= 1;
 				shooter.refreshColor ();
 			}
-			GUI.color = Color.blue;
+			if (shooter.cVals [2] == 1) {
+				GUI.color = Color.blue;
+			}
+			else {
+				GUI.color = transparentWhite;
+			}			
 			if (GUILayout.Button("BLUE", GUILayout.Width(150f), GUILayout.Height(50f))) {
 				shooter.cVals [2] ^= 1;
 				shooter.refreshColor ();
 			}
+			GUILayout.EndVertical ();
+			GUILayout.EndHorizontal ();
 		}
+
 	}
 
 
