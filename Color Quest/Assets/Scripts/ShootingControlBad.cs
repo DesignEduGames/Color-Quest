@@ -21,7 +21,7 @@ public class ShootingControlBad : MonoBehaviour {
 		cVals [1] = Mathf.RoundToInt (myColor.g);
 		cVals [2] = Mathf.RoundToInt (myColor.b);
 		refreshColor ();
-		mySprite = GetComponent<SpriteRenderer> ();
+		mySprite = source.GetComponent<SpriteRenderer> ();
 
 	}
 	

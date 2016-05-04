@@ -14,6 +14,10 @@ public class PlayerController : MonoBehaviour {
 	public bool jump = false;
 	public bool controlling;
 	public bool triggered;
+	public GameObject armChild;
+	private SpriteRenderer armSprite;
+	public int health;
+	private float stunTime;
 
 	public Color myColor;
 	public int [] cVals = new int[3];
@@ -39,6 +43,7 @@ public class PlayerController : MonoBehaviour {
 		controlling = true;
 
 		mySprite = GetComponent<SpriteRenderer> ();
+		armSprite = armChild.GetComponent<SpriteRenderer> ();
 
 		cVals [0] = Mathf.RoundToInt (myColor.r);
 		cVals [1] = Mathf.RoundToInt (myColor.g);
@@ -46,11 +51,23 @@ public class PlayerController : MonoBehaviour {
 
 		refreshColor ();
 		mySprite.color = myColor;
+		armSprite.color = myColor;
 
 
 	}
 
 	void Update() {
+
+		if (stunTime > 0f) {
+			stunTime -= Time.deltaTime;
+		}
+
+		if (stunTime > 0f) {
+			controlling = false;
+		}
+		else {
+			controlling = true;
+		}
 
 		movingLeft = false;
 		movingRight = false;
@@ -123,10 +140,17 @@ public class PlayerController : MonoBehaviour {
 	public void refreshColor () {
 		myColor = new Color (cVals [0], cVals [1], cVals [2]);
 		mySprite.color = myColor;
+		armSprite.color = myColor;
 	}
 
-	public void shootLaser () {
-	
+	public void takeDamage (int dm) {
+		health -= dm;
+	}
+
+	public void knockBack (Vector3 kf) {
+		myRb.velocity = Vector3.zero;
+		myRb.AddForce (kf);
+		stunTime = 0.5f;
 	}
 
 }
