@@ -18,6 +18,7 @@ public class PlayerController : MonoBehaviour {
 	private SpriteRenderer armSprite;
 	public int health;
 	private float stunTime;
+	float timeSinceLastHit;
 
 	public Color myColor;
 	public int [] cVals = new int[3];
@@ -57,16 +58,25 @@ public class PlayerController : MonoBehaviour {
 	}
 
 	void Update() {
+		timeSinceLastHit += Time.deltaTime;
 
-		if (stunTime > 0f) {
-			stunTime -= Time.deltaTime;
-		}
+//		if (stunTime > 0f) {
+//			stunTime -= Time.deltaTime;
+//		}
+//
+//		if (stunTime > 0f) {
+//			controlling = false;
+//		}
+//		else {
+//			controlling = true;
+//		}
 
-		if (stunTime > 0f) {
+
+		if (health <= 0) {
 			controlling = false;
-		}
-		else {
-			controlling = true;
+			transform.rotation = Quaternion.Lerp (transform.rotation, Quaternion.Euler (new Vector3(0f, 0f, Mathf.Sign(transform.localScale.x) * 90f)), 0.05f);
+			Camera.main.transform.rotation = Quaternion.Euler (Vector3.zero);
+
 		}
 
 		movingLeft = false;
@@ -144,13 +154,21 @@ public class PlayerController : MonoBehaviour {
 	}
 
 	public void takeDamage (int dm) {
-		health -= dm;
+		if (timeSinceLastHit > 1f) {
+			health -= dm;
+//			timeSinceLastHit = 0f;
+		}
 	}
 
 	public void knockBack (Vector3 kf) {
-		myRb.velocity = Vector3.zero;
-		myRb.AddForce (kf);
-		stunTime = 0.5f;
+		if (timeSinceLastHit > 1f) {
+			myRb.velocity = Vector3.zero;
+			myRb.AddForce (kf);
+//			myRb.velocity = myRb.velocity.normalized * 7f;
+			stunTime = 0.5f;
+			timeSinceLastHit = 0f;
+
+		}
 	}
 
 }

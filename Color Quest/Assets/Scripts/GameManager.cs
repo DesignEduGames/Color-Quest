@@ -16,6 +16,8 @@ public class GameManager : MonoBehaviour {
 	private float timeSinceSlowmoToggle;
 	public Texture tex;
 	private Texture2D pauseTex;
+	float timeSinceDeath;
+
 
 	private Color transparentWhite;
 
@@ -37,15 +39,20 @@ public class GameManager : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 		timeSinceSlowmoToggle += Time.deltaTime;
-		if (Input.GetKey (KeyCode.Tab)) {
+		if (Input.GetKey (KeyCode.Tab) && player.health > 0) {
 			if (!inColorMenu) {
 				timeSinceSlowmoToggle = 0f;
+				shooter.cVals [0] = 0;
+				shooter.cVals [1] = 0;
+				shooter.cVals [2] = 0;
+				shooter.refreshColor ();
 			}
 			inColorMenu = true;
 		}
 		else {
 			if (inColorMenu) {
 				timeSinceSlowmoToggle = 0f;
+
 			}
 			inColorMenu = false;
 		}
@@ -73,6 +80,18 @@ public class GameManager : MonoBehaviour {
 //			GUI.DrawTexture(new Rect(0,0,Screen.width, Screen.height), pauseTex);
 //		}
 
+		if (player.health <= 0) {
+			shooter.controlling = false;
+			player.controlling = false;
+			timeSinceDeath += Time.deltaTime;
+			float trans = Mathf.Lerp (0f, 1f, timeSinceDeath / 4f);
+			Color darker = new Color (0f, 0f, 0f, trans);
+			pauseTex.SetPixel(0,0, darker);
+			pauseTex.Apply();
+			GUI.DrawTexture(new Rect(0,0,Screen.width, Screen.height), pauseTex);
+			return;
+			
+		}
 
 		if (inColorMenu) {
 

@@ -11,6 +11,7 @@ public class ShootingControlBad : MonoBehaviour {
 	public int[] cVals = new int[3];
 	public bool controlling;
 	private SpriteRenderer mySprite;
+	public Light lt;
 
 	// Use this for initialization
 	void Start () {
@@ -32,18 +33,19 @@ public class ShootingControlBad : MonoBehaviour {
 		mousePos.z = 10f;
 		mousePos = Camera.main.ScreenToWorldPoint (mousePos);
 
-		float zRot = Mathf.Rad2Deg * (Mathf.Atan2 (mousePos.y - transform.position.y, mousePos.x - transform.position.x));
-		if (mousePos.x - transform.position.x < 0) {
-			transform.localScale = new Vector3 (-1f, -1f, 1f);
-			zRot = 360f - zRot;
-		}
-		else {
-			transform.localScale = new Vector3 (1f, 1f, 1f);
-		}
-		transform.rotation = Quaternion.Euler (new Vector3 (0f, 0f, zRot));
 
 		shooting = false;
 		if (controlling) {
+			
+			float zRot = Mathf.Rad2Deg * (Mathf.Atan2 (mousePos.y - transform.position.y, mousePos.x - transform.position.x));
+			if (mousePos.x - transform.position.x < 0) {
+				transform.localScale = new Vector3 (-1f, -1f, 1f);
+				zRot = 360f - zRot;
+			}
+			else {
+				transform.localScale = new Vector3 (1f, 1f, 1f);
+			}
+			transform.rotation = Quaternion.Euler (new Vector3 (0f, 0f, zRot));
 			if (Input.GetMouseButton (0)) {
 				shooting = true;
 			}
@@ -51,8 +53,10 @@ public class ShootingControlBad : MonoBehaviour {
 		for (int i = 0; i < myLines.Length; i++) {
 			myLines [i].enabled = false;
 		}
+		lt.color = Color.black;
 		if (shooting) {
 			if (myColor != Color.black) {
+				lt.color = myColor;
 				bool bouncing = true;
 				int lineNum = 0;
 
