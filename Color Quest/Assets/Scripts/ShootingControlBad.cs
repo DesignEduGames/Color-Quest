@@ -74,7 +74,7 @@ public class ShootingControlBad : MonoBehaviour {
 					myLines [i].SetColors (nextColor, nextColor);
 					myLines [i].SetWidth (0.2f, 0.2f);
 					myLines [i].SetVertexCount (2);
-					RaycastHit2D bounceHit = Physics2D.Raycast (prevPos, nextDir, 100f, ~(1 << LayerMask.NameToLayer ("Player")));
+					RaycastHit2D bounceHit = Physics2D.Raycast (prevPos, nextDir, 100f, ~(1 << LayerMask.NameToLayer ("Player") | 1 << LayerMask.NameToLayer ("Flag")));
 					if (bounceHit.collider == null) {
 						bouncing = false;
 						Vector3 endPos = prevPos + (nextDir * 100f);
@@ -84,7 +84,14 @@ public class ShootingControlBad : MonoBehaviour {
 						EnemyScript es = bounceHit.collider.gameObject.GetComponent<EnemyScript> ();
 						es.absorbColor (nextCVals);
 						myLines [i].SetPositions (new Vector3[] { prevPos, bounceHit.point });
-						Debug.DrawRay (bounceHit.point, Vector3.down * 50f, Color.yellow);
+						prevPos = bounceHit.point + (bounceHit.normal.normalized * 0.01f);
+						nextDir = (Vector2.Reflect (nextDir, bounceHit.normal)).normalized;
+						bouncing = false;
+					}
+					else if (bounceHit.collider.tag == "Interactable") {
+						SwitchScript es = bounceHit.collider.gameObject.GetComponent<SwitchScript> ();
+						es.absorbColor (nextCVals);
+						myLines [i].SetPositions (new Vector3[] { prevPos, bounceHit.point });
 						prevPos = bounceHit.point + (bounceHit.normal.normalized * 0.01f);
 						nextDir = (Vector2.Reflect (nextDir, bounceHit.normal)).normalized;
 						bouncing = false;
@@ -93,16 +100,12 @@ public class ShootingControlBad : MonoBehaviour {
 						PlatformScript ps = bounceHit.collider.gameObject.GetComponent<PlatformScript> ();
 						nextCVals = ps.reflectColor (nextCVals);
 						nextColor = new Color (nextCVals [0], nextCVals [1], nextCVals [2]);
-						Debug.DrawRay (prevPos, nextDir * 50f, Color.green);
 						myLines [i].SetPositions (new Vector3[] { prevPos, bounceHit.point });
-						Debug.DrawRay (bounceHit.point, Vector3.down * 50f, Color.yellow);
 						prevPos = bounceHit.point + (bounceHit.normal.normalized * 0.01f);
 						nextDir = (Vector2.Reflect (nextDir, bounceHit.normal)).normalized;
 					}
 					else {
-						Debug.DrawRay (prevPos, nextDir * 50f, Color.green);
 						myLines [i].SetPositions (new Vector3[] { prevPos, bounceHit.point });
-						Debug.DrawRay (bounceHit.point, Vector3.down * 50f, Color.yellow);
 						prevPos = bounceHit.point + (bounceHit.normal.normalized * 0.01f);
 						nextDir = (Vector2.Reflect (nextDir, bounceHit.normal)).normalized;
 					}

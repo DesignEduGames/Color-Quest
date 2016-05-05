@@ -36,6 +36,8 @@ public class PlayerController : MonoBehaviour {
 		Physics2D.IgnoreLayerCollision (LayerMask.NameToLayer ("Player"), LayerMask.NameToLayer ("101"), true);
 		Physics2D.IgnoreLayerCollision (LayerMask.NameToLayer ("Player"), LayerMask.NameToLayer ("110"), true);
 		Physics2D.IgnoreLayerCollision (LayerMask.NameToLayer ("Player"), LayerMask.NameToLayer ("111"), true);
+		Physics2D.IgnoreLayerCollision (LayerMask.NameToLayer ("Detector"), LayerMask.NameToLayer ("Flag"));
+
 
 		velocity = 15f;
 		jumpForce = 2000f;
@@ -92,7 +94,7 @@ public class PlayerController : MonoBehaviour {
 				movingRight = true;
 			}
 				
-			if ((Input.GetKeyDown(KeyCode.Space) || Input.GetKeyDown(KeyCode.W)) && canJump && Mathf.Abs(myRb.velocity.y) < 0.01f) {
+			if ((Input.GetKeyDown(KeyCode.Space) || Input.GetKeyDown(KeyCode.W)) && canJump) {
 				jump = true;
 			}
 
@@ -141,9 +143,15 @@ public class PlayerController : MonoBehaviour {
 	}
 
 	void OnTriggerEnter2D (Collider2D other) {
+		if (other.tag == "Flag") {
+			return;
+		}
 		underNum++;
 	}
 	void OnTriggerExit2D (Collider2D other) {
+		if (other.tag == "Flag") {
+			return;
+		}
 		underNum--;
 	}
 

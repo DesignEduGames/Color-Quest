@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour {
 
@@ -16,7 +17,14 @@ public class GameManager : MonoBehaviour {
 	private float timeSinceSlowmoToggle;
 	public Texture tex;
 	private Texture2D pauseTex;
+	private Texture2D healthTex;
 	float timeSinceDeath;
+
+	GUIStyle titleStyle;
+	GUIStyle buttonStyle;
+
+	public Font fontThing;
+
 
 
 	private Color transparentWhite;
@@ -34,12 +42,21 @@ public class GameManager : MonoBehaviour {
 		pauseTex.SetPixel(0,0,gray);
 		pauseTex.Apply();
 
+		healthTex = new Texture2D(1, 1);
+		healthTex.SetPixel(0,0,Color.green);
+		healthTex.Apply();
+
+
+
 	}
 
 	// Update is called once per frame
 	void Update () {
 		timeSinceSlowmoToggle += Time.deltaTime;
-		if (Input.GetKey (KeyCode.Tab) && player.health > 0) {
+		if (Input.GetKeyDown (KeyCode.R)) {
+			SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+		}
+		if ((Input.GetKey (KeyCode.LeftShift) || Input.GetKey (KeyCode.Tab)) && player.health > 0) {
 			if (!inColorMenu) {
 				timeSinceSlowmoToggle = 0f;
 				shooter.cVals [0] = 0;
@@ -73,12 +90,11 @@ public class GameManager : MonoBehaviour {
 	}
 
 	void OnGUI () {
-
-//		if (Time.timeScale < 1f) {
-//			Debug.Log ("asdf");
-////			GUI.skin.box.normal.background = pauseTex;
-//			GUI.DrawTexture(new Rect(0,0,Screen.width, Screen.height), pauseTex);
-//		}
+		if (titleStyle == null) {
+			titleStyle = new GUIStyle (GUI.skin.label);
+			titleStyle.fontSize = 25;
+			titleStyle.font = fontThing;
+		}
 
 		if (player.health <= 0) {
 			shooter.controlling = false;
@@ -102,11 +118,13 @@ public class GameManager : MonoBehaviour {
 			GUILayout.EndHorizontal ();
 			GUILayout.BeginVertical (GUILayout.Width (Screen.width / 4));
 
-
+			GUILayout.BeginHorizontal (GUILayout.Height (Screen.height / 4));
+			GUILayout.Label ("");
+			GUILayout.EndHorizontal ();
 
 			GUI.DrawTexture(new Rect(0,0,Screen.width, Screen.height), pauseTex);
 			GUI.color = Color.white;
-			GUILayout.Label ("PLAYER COLORS");
+			GUILayout.Label ("PLAYER COLORS", titleStyle);
 			if (player.cVals [1] == 0) {
 				GUI.color = Color.magenta;
 			}
@@ -146,8 +164,12 @@ public class GameManager : MonoBehaviour {
 
 			GUILayout.EndVertical ();
 			GUILayout.BeginVertical (GUILayout.Width (Screen.width / 4));
+
+			GUILayout.BeginHorizontal (GUILayout.Height (Screen.height / 4));
+			GUILayout.Label ("");
+			GUILayout.EndHorizontal ();
 			GUI.color = Color.white;
-			GUILayout.Label ("LASER COLORS");
+			GUILayout.Label ("LASER COLORS", titleStyle);
 
 			if (shooter.cVals [0] == 1) {
 				GUI.color = Color.red;
@@ -181,8 +203,20 @@ public class GameManager : MonoBehaviour {
 			}
 			GUILayout.EndVertical ();
 			GUILayout.EndHorizontal ();
+			GUI.color = transparentWhite;
+
 		}
 
+
+		for (int i = 0; i < player.health; i++) {
+			DrawQuad (new Rect(15 + 20*i, Screen.height - 50, 0.5f, 30.0f));
+		}
+
+	}
+
+	void DrawQuad(Rect position) {
+		GUI.skin.box.normal.background = healthTex;
+		GUI.Box(position, GUIContent.none);
 	}
 
 

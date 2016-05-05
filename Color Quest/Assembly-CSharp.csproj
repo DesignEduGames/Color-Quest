@@ -45,12 +45,16 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+     <Compile Include="Assets\Scripts\DoorScript.cs" />
      <Compile Include="Assets\Scripts\EnemyScript.cs" />
      <Compile Include="Assets\Scripts\GameManager.cs" />
+     <Compile Include="Assets\Scripts\NextLevelTrigger.cs" />
      <Compile Include="Assets\Scripts\PlatformScript.cs" />
      <Compile Include="Assets\Scripts\PlayerController.cs" />
      <Compile Include="Assets\Scripts\ShootingControl.cs" />
      <Compile Include="Assets\Scripts\ShootingControlBad.cs" />
+     <Compile Include="Assets\Scripts\SwitchScript.cs" />
+     <Compile Include="Assets\Scripts\TextPost.cs" />
      <Compile Include="Assets\Scripts\colorPlatform.cs" />
      <Compile Include="Assets\Scripts\playerController_2D.cs" />
      <Compile Include="Assets\Scripts\toggleColor.cs" />

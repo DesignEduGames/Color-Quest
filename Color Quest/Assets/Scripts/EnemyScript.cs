@@ -56,8 +56,8 @@ public class EnemyScript : MonoBehaviour {
 
 
 
-		if (dist < 50f && Physics2D.Raycast (transform.position, player.transform.position - transform.position, 
-			dist, ~(1 << LayerMask.NameToLayer ("Player") | 1 << LayerMask.NameToLayer ("Enemy"))).collider == null) {
+		if (dist < 60f && Physics2D.Raycast (transform.position, player.transform.position - transform.position, 
+			dist, ~(1 << LayerMask.NameToLayer ("Player") | 1 << LayerMask.NameToLayer ("Enemy") | 1 << LayerMask.NameToLayer("Flag"))).collider == null) {
 //			myRb.velocity = (player.transform.position - transform.position).normalized * 3f;
 			myRb.AddForce ((player.transform.position - transform.position).normalized * 10f);
 			myRb.velocity = myRb.velocity.normalized * 4f;
@@ -84,7 +84,7 @@ public class EnemyScript : MonoBehaviour {
 		Destroy(gameObject);
 	}
 
-	void OnCollisionEnter2D (Collision2D collision) {
+	void OnCollisionStay2D (Collision2D collision) {
 		myRb.AddForce ((collision.contacts [0].normal) * 100f);
 		Debug.Log ("collided");
 		if (collision.collider.tag == "Player") {
