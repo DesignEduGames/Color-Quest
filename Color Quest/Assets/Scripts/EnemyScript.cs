@@ -56,11 +56,11 @@ public class EnemyScript : MonoBehaviour {
 
 
 
-		if (dist < 60f && Physics2D.Raycast (transform.position, player.transform.position - transform.position, 
+		if (dist < 70f && Physics2D.Raycast (transform.position, player.transform.position - transform.position, 
 			dist, ~(1 << LayerMask.NameToLayer ("Player") | 1 << LayerMask.NameToLayer ("Enemy") | 1 << LayerMask.NameToLayer("Flag"))).collider == null) {
 //			myRb.velocity = (player.transform.position - transform.position).normalized * 3f;
 			myRb.AddForce ((player.transform.position - transform.position).normalized * 10f);
-			myRb.velocity = myRb.velocity.normalized * 4f;
+			myRb.velocity = myRb.velocity.normalized * 6f;
 		}
 		else {
 			myRb.velocity = Vector3.zero;
