@@ -97,6 +97,10 @@ public class GameManager : MonoBehaviour {
 		}
 
 		if (player.health <= 0) {
+			if (timeSinceDeath > 4.5f) {
+				SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+
+			}
 			shooter.controlling = false;
 			player.controlling = false;
 			timeSinceDeath += Time.deltaTime;
@@ -124,7 +128,7 @@ public class GameManager : MonoBehaviour {
 
 			GUI.DrawTexture(new Rect(0,0,Screen.width, Screen.height), pauseTex);
 			GUI.color = Color.white;
-			GUILayout.Label ("PLAYER COLORS", titleStyle);
+			GUILayout.Label ("ARMOR PAINTS", titleStyle);
 			if (player.cVals [1] == 0) {
 				GUI.color = Color.magenta;
 			}
@@ -169,7 +173,7 @@ public class GameManager : MonoBehaviour {
 			GUILayout.Label ("");
 			GUILayout.EndHorizontal ();
 			GUI.color = Color.white;
-			GUILayout.Label ("LASER COLORS", titleStyle);
+			GUILayout.Label ("LASER LIGHTS", titleStyle);
 
 			if (shooter.cVals [0] == 1) {
 				GUI.color = Color.red;
